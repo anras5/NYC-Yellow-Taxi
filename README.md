@@ -32,8 +32,12 @@ Przykładowo:
 source setup.sh gs://pbd-23-AA/projekt2/yellow_tripdata_result gs://pbd-23-AA/projekt2/taxi_zone_lookup.csv
 ```
 
-- Następnie uruchom skrypt tworzący tematy źródłowe Kafki.
+- Uruchom skrypt tworzący tematy źródłowe Kafki.
 ```shell
 ./manage-topics.sh up
 ```
 
+- Uruchom skrypt zasilający temat Kafki. 
+```shell
+./run-producer.sh
+```

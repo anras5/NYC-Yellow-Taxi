@@ -30,11 +30,11 @@ source ~/.bashrc
 echo "Tworzenie folderu data"
 [ -d "${HOME}/data" ] || mkdir "${HOME}/data"
 
-echo "Kopiowanie pliku statycznego z usługi Cloud Storage..."
-hadoop fs -copyToLocal $1 "${TAXI_STATIC_DATA_PATH}"
-
 echo "Kopiowanie plików strumieniowych z usługi Cloud Storage..."
-hadoop fs -copyToLocal $2 "${TAXI_STREAM_DATA_PATH}"
+hadoop fs -copyToLocal $1 "${TAXI_STREAM_DATA_PATH}"
+
+echo "Kopiowanie pliku statycznego z usługi Cloud Storage..."
+hadoop fs -copyToLocal $2 "${TAXI_STATIC_DATA_PATH}"
 
 echo "Ustawianie uprawnień dla skryptów z projektu..."
 chmod +x $(pwd)/*.sh
