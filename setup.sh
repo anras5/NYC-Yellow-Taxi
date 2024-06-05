@@ -1,16 +1,13 @@
 #!/bin/bash
 
-# Funkcja ustawia zmienną środowiskową w pliku .bashrc o ile już taka nie istnieje
 add_to_bashrc() {
     local var_name="$1"
     local var_value="$2"
 
-    if ! grep -q "^export $var_name=" ~/.bashrc; then
-        echo "export $var_name=$var_value" >> ~/.bashrc
-        echo "Dodano $var_name do .bashrc"
-    else
-        echo "$var_name już istnieje w pliku .bashrc, nie dodaję"
-    fi
+    sed -i "/^export $var_name=/d" ~/.bashrc
+
+    echo "export $var_name=$var_value" >> ~/.bashrc
+    echo "Dodano $var_name do .bashrc"
 }
 
 # Ustawienia zmiennych środowiskowych
@@ -19,6 +16,8 @@ TAXI_STREAM_DATA_PATH="${HOME}/data/yellow_tripdata_result"
 TAXI_STATIC_DATA_PATH="${HOME}/data/taxi_zone_lookup.csv"
 
 KAFKA_TOPIC_PRODUCER="producer"
+
+POSTGRES_PASSWORD="bigdatapassword123"
 
 add_to_bashrc "CLUSTER_NAME" "$CLUSTER_NAME"
 add_to_bashrc "TAXI_STREAM_DATA_PATH" "$TAXI_STREAM_DATA_PATH"

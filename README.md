@@ -37,6 +37,11 @@ source setup.sh gs://pbd-23-AA/projekt2/yellow_tripdata_result gs://pbd-23-AA/pr
 ./manage-topics.sh up
 ```
 
+- Uruchom skrypt tworzący ujście dla przetwarzania ETL.
+```shell
+./run-sink.sh
+```
+
 - Uruchom skrypt zasilający temat Kafki. 
 ```shell
 ./run-producer.sh
