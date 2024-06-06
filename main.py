@@ -1,12 +1,14 @@
-import socket
 import argparse
 import os
+import socket
+
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import from_csv, to_timestamp, col, when, date_trunc, sum as _sum, count, window
+from pyspark.sql.functions import col, count, date_trunc, from_csv, sum as _sum, to_timestamp, when, window
 
 # Set up argument parsing
 parser = argparse.ArgumentParser(description="NYC Yellow Taxi Processing")
-parser.add_argument('--mode', type=str, required=True, choices=['A', 'C'], help="Mode: 'A' for real-time with updates, 'C' for real-time with final results only")
+parser.add_argument('--mode', type=str, required=True, choices=['A', 'C'],
+                    help="Mode: 'A' for real-time with updates, 'C' for real-time with final results only")
 args = parser.parse_args()
 
 mode = args.mode
@@ -67,11 +69,29 @@ elif mode == 'C':
     output_mode = "append"
 
 # Write the results to the console
-query = aggregatedDF.writeStream \
+writer = aggregatedDF.writeStream \
     .outputMode(output_mode) \
-    .format("console") \
-    .option("truncate", "false") \
-    .start()
+    .foreachBatch(
+        lambda df_batch, batch_id:
+        df_batch.select(
+            col("date").cast("string").alias("day"),
+            col("Borough").alias("borough"),
+            col("num_departures"),
+            col("num_arrivals"),
+            col("total_departing_passengers"),
+            col("total_arriving_passengers")
+        ).write
+            .format("jdbc")
+            .mode("overwrite")
+            .option("url", f"jdbc:postgresql://{host_name}:54320/streamoutput")
+            .option("dbtable", "taxi_etl")
+            .option("user", "postgres")
+            .option("password", os.getenv("PGPASSWORD"))
+            .option("truncate", "true")
+            .option("checkpointLocation", "/tmp")
+            .save()
+        )
 
+query = writer.start()
 # Await termination of the query
 query.awaitTermination()
