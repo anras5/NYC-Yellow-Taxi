@@ -52,12 +52,24 @@ source setup.sh gs://pbd-23-AA/projekt2/yellow_tripdata_result gs://pbd-23-AA/pr
 ./run-sink.sh
 ```
 
-## Utrzymanie obrazu czasu rzeczywistego.
-
-- Uruchom skrypt przetwarzający dane.
+- Reset ujścia ETL
 
 ```shell
-./run-processing.sh
+docker container rm -f postgresik && ./run-sink.sh
+```
+
+## Utrzymanie obrazu czasu rzeczywistego.
+
+- Uruchom skrypt przetwarzający dane w wersji A
+
+```shell
+./run-processing.sh A 10 5
+```
+
+- Uruchom skrypt przetwarzający dane w wersji C
+
+```shell
+./run-processing.sh C
 ```
 
 - Uruchom skrypt zasilający temat Kafki.

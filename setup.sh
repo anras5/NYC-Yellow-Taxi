@@ -16,6 +16,7 @@ TAXI_STREAM_DATA_PATH="${HOME}/data/yellow_tripdata_result"
 TAXI_STATIC_DATA_PATH="${HOME}/data/taxi_zone_lookup.csv"
 
 KAFKA_TOPIC_PRODUCER="producer"
+KAFKA_TOPIC_ANOMALIES="anomalies"
 
 PGPASSWORD="bigdatapassword123"
 
@@ -24,6 +25,7 @@ add_to_bashrc "CLUSTER_NAME" "$CLUSTER_NAME"
 add_to_bashrc "TAXI_STREAM_DATA_PATH" "$TAXI_STREAM_DATA_PATH"
 add_to_bashrc "TAXI_STATIC_DATA_PATH" "$TAXI_STATIC_DATA_PATH"
 add_to_bashrc "KAFKA_TOPIC_PRODUCER" "$KAFKA_TOPIC_PRODUCER"
+add_to_bashrc "KAFKA_TOPIC_ANOMALIES" "$KAFKA_TOPIC_ANOMALIES"
 add_to_bashrc "PGPASSWORD" "$PGPASSWORD"
 
 source ~/.bashrc
@@ -41,6 +43,9 @@ echo "Kopiowanie pliku statycznego z usługi Cloud Storage..."
 hadoop fs -copyToLocal $2 "${TAXI_STATIC_DATA_PATH}"
 
 echo "Tworzenie folderu w HDFS do przechowania statycznego pliku..."
+if hdfs dfs -test -d "${HOME}/data"; then
+    hdfs dfs -rm -r "${HOME}/data"
+fi
 hdfs dfs -mkdir -p "${HOME}/data"
 
 echo "Kopiowanie pliku statycznego do HDFS..."
