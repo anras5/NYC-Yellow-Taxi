@@ -34,7 +34,7 @@ valuesDF = ds1.selectExpr("CAST(value as string)")
 schema = "tripID STRING, start_stop INT, timestamp STRING, locationID INT, passenger_count INT, trip_distance DOUBLE," \
          " payment_type INT, amount DOUBLE, VendorID STRING"
 parsedDF = valuesDF.select(from_csv(valuesDF.value, schema).alias("data")).select("data.*")
-parsedDF = parsedDF.withColumn("timestamp", to_timestamp("timestamp"))
+parsedDF = parsedDF.withColumn("timestamp", to_timestamp(col("timestamp"), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # STATIC
@@ -94,7 +94,7 @@ query_etl = aggregatedDF.writeStream.outputMode(output_mode).foreachBatch(
 
 # AGREGACJE
 anomalyDF = watermarkedDF.groupBy(
-    window(col("timestamp"), f"1 day").alias("anomaly_window"),
+    window(col("timestamp"), f"{D} hours", "1 hour").alias("anomaly_window"),
     "Borough"
 ).agg(
     coalesce(_sum(when(col("start_stop") == 0, col("passenger_count"))), lit(0)).alias("total_departing_passengers"),
@@ -119,7 +119,5 @@ query_anomaly = anomalyDF.selectExpr(
     .option("topic", os.getenv("KAFKA_TOPIC_ANOMALIES")) \
     .option("checkpointLocation", "/tmp/anomalies") \
     .start()
-
-# .trigger(processingTime="1 hour") \
 
 spark.streams.awaitAnyTermination()

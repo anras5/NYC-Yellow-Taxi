@@ -1,6 +1,37 @@
 # NYC-Yellow-Taxi + Spark
 
-## Producent i skrypty inicjujące i zasilające
+# Spis treści:
+1. Opis zadania
+2. Producent; skrypty inicjujące i zasilający
+
+# Zadania:
+
+### ETL – obraz czasu rzeczywistego
+Utrzymywanie agregacji na poziomie dnia i dzielnicy.
+Wartości agregatów to:
+- liczba wyjazdów
+- liczba przyjazdów
+- sumaryczna osób wyjeżdżających
+- sumaryczna osób przyjeżdżających 
+
+### Wykrywanie "anomalii"
+Wykrywanie "anomalii" ma polegać na wykrywaniu dużej różnicy w liczbie osób wyjeżdżających z danej dzielnicy w
+stosunku do liczby przyjeżdżających do danej dzielnicy w określonym czasie.
+Program ma być parametryzowany przez: 
+- D - długość okresu czasu wyrażoną w godzinach
+- L - liczbę osób (minimalna)
+
+Wykrywanie anomalii ma być dokonywane co godzinę. \
+Przykładowo, dla parametrów D=4, L=10000 program co godzinę będzie raportował te dzielnice, w których w ciągu
+ostatnich 4 godzin liczba osób "zmniejszyła się" o co najmniej 10 tysięcy osób.
+Raportowane dane mają zawierać:
+- analizowany okres - okno (start i stop)
+- nazwę dzielnicy
+- liczbę osób wyjeżdżających
+- liczbę osób przyjeżdżających
+- różnicę w powyższych liczbach
+
+# Producent i skrypty inicjujące i zasilające
 
 - Utwórz klaster na platformie GCP przy użyciu poniższego polecenia
 
@@ -24,7 +55,7 @@ gs://goog-dataproc-initialization-actions-${REGION}/kafka/kafka.sh
     - run-processing.sh (main.py)
     - run-producer.sh (KafkaProducer.jar)
 
-- Uruchom skrypt inicjalizujący środowisko. Pobiera on niezbędne biblioteki, dane wejściowe do projektu
+- Skrypt inicjalizujący środowisko. Pobiera on niezbędne biblioteki, dane wejściowe do projektu
   oraz ustawia zmienne środowiskowe (dlatego uruchamiamy poprzez polecenie source).
   Skrypt przyjmuje dwa parametry: pierwszy to folder w usłudze Cloud Storage,
   w którym znajdują się pliki główne (strumieniowe - zbiór pierwszy),
@@ -40,27 +71,16 @@ Przykładowo:
 source setup.sh gs://pbd-23-AA/projekt2/yellow_tripdata_result gs://pbd-23-AA/projekt2/taxi_zone_lookup.csv
 ```
 
-- Uruchom skrypt tworzący tematy źródłowe Kafki.
+- Skrypt tworzący tematy Kafki (źródłowy temat oraz temat dla anomalii).
 
 ```shell
-./manage-topics.sh up
-```
-
-- Uruchom skrypt tworzący ujście dla przetwarzania ETL.
-
-```shell
-./run-sink.sh
-```
-
-- Reset ujścia ETL
-
-```shell
-docker container rm -f postgresik && ./run-sink.sh
+./manage-topics.sh <up|down>
 ```
 
 ## Utrzymanie obrazu czasu rzeczywistego.
 
-- Uruchom skrypt przetwarzający dane w wersji A
+
+- Skrypt przetwarzający dane w wersji A
 
 ```shell
 ./run-processing.sh A 10 5
@@ -69,7 +89,7 @@ docker container rm -f postgresik && ./run-sink.sh
 - Uruchom skrypt przetwarzający dane w wersji C
 
 ```shell
-./run-processing.sh C
+./run-processing.sh C 10 5
 ```
 
 - Uruchom skrypt zasilający temat Kafki.

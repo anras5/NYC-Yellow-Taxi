@@ -9,6 +9,5 @@ create table taxi_etl (
     num_departures INTEGER NOT NULL,
     num_arrivals INTEGER NOT NULL,
     total_departing_passengers INTEGER NOT NULL,
-    total_arriving_passengers INTEGER NOT NULL,
-    PRIMARY KEY (day, borough)
+    total_arriving_passengers INTEGER NOT NULL
 )
