@@ -142,9 +142,13 @@ source setup.sh gs://pbd-23-AA/projekt2/yellow_tripdata_result gs://pbd-23-AA/pr
 ```
 
 Wyjście po uruchomieniu skryptu powinno wyglądać mniej więcej tak:
+
 ![./images/setup1.png](./images/setup1.png)
+
 Później logi z kopiowania plików... a zakończenie wyjścia tak:
+
 ![./images/setup2.png](./images/setup2.png)
+
 Jeżeli pojawiły się błędy przy pobieraniu pakietu tree (czasami zdarza się tak jeżeli klaster nie zdążył się w pełni
 zainicjalizować) to nie ma powodu do obaw, ponieważ nie jest on niezbędny. Możesz jednak go doinstalować poleceniem:
 
@@ -159,7 +163,9 @@ tree -p data
 ```
 
 Wynik powinien być dokładnie taki:
+
 ![tree1.png](./images/tree1.png)
+
 Na końcu polecenia powinieneś/powinnaś zobaczyć napis `1 directory, 101 files`. Inny wynik oznacza, że źle został
 uruchomiony skrypt inicjujący (ze złymi parametrami). Aby to poprawić uruchom go jeszcze raz z poprawnymi (jest on
 przystosowany do wielokrotnego uruchamiania i nie powinny wystąpić żadne błędy, a niepoprawnie zapisane pliki w
@@ -352,6 +358,7 @@ query_anomaly = anomalyDF.selectExpr(
 ```
 
 Przykład poprawnego działania:
+
 ![sink.png](./images/sink1.png)
 
 Możesz sprawdzić czy ujście dla ETL działa prawidłowo poleceniem:
@@ -361,6 +368,7 @@ docker ps
 ```
 
 Przykład poprawnego działania:
+
 ![sink2.png](./images/sink2.png)
 
 # Miejsce utrzymywania obrazów czasu rzeczywistego – cechy
@@ -385,6 +393,7 @@ Obraz czasu rzeczywistego:
 ```
 
 Przykład działania:
+
 ![img.png](./images/etl1.png)
 
 Wykrywanie anomalii:
